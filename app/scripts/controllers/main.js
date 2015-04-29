@@ -8,10 +8,10 @@
  * Controller of the cop21App
  */
 angular.module('cop21App')
-  .controller('MainCtrl', function ($scope, apiService, EDGES_ID) {
+  .controller('MainCtrl', function ($scope, apiService, EDGES_ID, parseGdocDataFilter) {
     apiService.getGoogleDriveDoc(EDGES_ID, {tqx:'responseHandler:JSON_CALLBACK'}).then(
       function(data){
-        console.log(data.table.rows);
+        console.log(parseGdocDataFilter(data));
       },
       function(err){
         console.log(err);
