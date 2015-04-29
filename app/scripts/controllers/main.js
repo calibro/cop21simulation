@@ -8,10 +8,13 @@
  * Controller of the cop21App
  */
 angular.module('cop21App')
-  .controller('MainCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+  .controller('MainCtrl', function ($scope, apiService, EDGES_ID) {
+    apiService.getGoogleDriveDoc(EDGES_ID, {tqx:'responseHandler:JSON_CALLBACK'}).then(
+      function(data){
+        console.log(data.table.rows);
+      },
+      function(err){
+        console.log(err);
+      }
+    );
   });
