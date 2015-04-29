@@ -15,7 +15,9 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'ui.bootstrap',
+    'angular-loading-bar'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -23,9 +25,13 @@ angular
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl'
+      .when('/viz', {
+        templateUrl: 'views/viz.html',
+        controller: 'VizCtrl'
+      })
+      .when('/update', {
+        templateUrl: 'views/update.html',
+        controller: 'UpdateCtrl'
       })
       .otherwise({
         redirectTo: '/'
