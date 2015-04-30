@@ -33,6 +33,10 @@ angular
         templateUrl: 'views/update.html',
         controller: 'UpdateCtrl'
       })
+      .when('/mockup', {
+        templateUrl: 'views/mockup.html',
+        controller: 'MockupCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });
