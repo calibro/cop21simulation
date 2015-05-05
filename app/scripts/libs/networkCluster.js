@@ -5,7 +5,10 @@
   cop21.network = function(){
 
     var height = 600,
-        width = 600;
+        width = 600,
+        delRadius = 6,
+        delPadding = 2,
+        tabRadius = 20;
 
 
     function network(selection){
@@ -17,15 +20,8 @@
             chartHeight = height - margin.top - margin.bottom;
 
         data.nodes.forEach(function(d){
-          // if(d.fixed){
-          //   d.x = (parseInt(d.type)+1) * (chartWidth / 5)
-          //   d.y = chartHeight / 2
-          //   d.radius = 10
-          // }else{
-            d.radius = 6
-          // }
-
-          d.type = parseInt(d.type)
+            d.radius = delRadius
+            d.type = parseInt(d.type)
         })
 
         var nodes = data.nodes,
@@ -77,6 +73,8 @@
           .attr('width', width)
           .attr('height', height)
             .append("g")
+            .attr('width', chartWidth)
+            .attr('height', chartHeight)
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         }
         else
@@ -85,6 +83,8 @@
           .attr('width', width)
           .attr('height', height)
             .select("g")
+            .attr('width', chartWidth)
+            .attr('height', chartHeight)
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         }
 
@@ -113,7 +113,7 @@
         force.start();
 
         force.on("tick", function(e) {
-          //var q = d3.geom.quadtree(nodes),
+
           var q = d3.geom.quadtree(nodes.concat(nodesTables)),
               k = e.alpha * .1,
               i = 0,
@@ -123,19 +123,17 @@
           while (++i < n) {
             o = nodes[i];
             //if (o.fixed) continue;
-            //c = nodes[o.type];
-
             c = nodesTables[o.type];
             o.x += (c.x - o.x) * k;
             o.y += (c.y - o.y) * k;
             q.visit(collide(o));
           }
 
-          chart.selectAll(".tables")
+          chart.selectAll(".del")
               .attr("cx", function(d) { return d.x; })
               .attr("cy", function(d) { return d.y; });
 
-              chart.selectAll(".tablesDpoint")
+              chart.selectAll(".delPoint")
                   .attr("cx", function(d) { return d.x; })
                   .attr("cy", function(d) { return d.y; });
         });
@@ -148,9 +146,9 @@
 
           while (++i < n) q.visit(collide(nodesTables[i]));
 
-              chart.selectAll(".tablesD")
-              .attr("cx", function(d) { return d.x = Math.max(d.radius, Math.min(chartWidth - d.radius-2-10, d.x)); })
-        .attr("cy", function(d) { return d.y = Math.max(d.radius, Math.min(chartHeight - d.radius-2-10, d.y)); });
+              chart.selectAll(".tables")
+              .attr("cx", function(d) { return d.x = Math.max(d.radius, Math.min(chartWidth - d.radius-delPadding-(delRadius*2), d.x)); })
+              .attr("cy", function(d) { return d.y = Math.max(d.radius, Math.min(chartHeight - d.radius-delPadding-(delRadius*2), d.y)); });
 
         chart.selectAll(".links").attr("x1", function(d) { return d.source.x; })
     .attr("y1", function(d) { return d.source.y; })
@@ -172,28 +170,28 @@
     .attr("stroke-opacity", 0.2)
 
 
-        chart.selectAll(".tables")
+        chart.selectAll(".del")
             .data(nodes)
           .enter().append("circle")
-          .attr("class", "tables")
-            .attr("r", function(d) { return d.radius - 2; })
+          .attr("class", "del")
+            .attr("r", function(d) { return d.radius - delPadding; })
             .attr("fill", "#00ffff")
             .attr("fill-opacity", 0.5)
             .on("click", function(d){
             console.log(d)
           })
 
-        chart.selectAll(".tablesD")
+        chart.selectAll(".tables")
       .data(nodesTables)
     .enter().append("circle")
-      .attr("class", "tablesD")
-      .attr("r", function(d){return d.radius-2})
+      .attr("class", "tables")
+      .attr("r", function(d){return d.radius-delPadding})
       .style("fill", function(d) { return "#4d4d4d" })
 
-      chart.selectAll(".tablesDpoint")
+      chart.selectAll(".delPoint")
     .data(nodes)
   .enter().append("circle")
-    .attr("class", "tablesDpoint")
+    .attr("class", "delPoint")
     .attr("r", function(d){return 0.5})
     .style("fill", function(d) { return "black" })
 
