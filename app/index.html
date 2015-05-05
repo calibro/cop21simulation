@@ -26,7 +26,7 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div ng-view=""></div>
+    <div ng-view="" style="height:100%"></div>
 
 
 
@@ -58,15 +58,20 @@
     <!-- endbower -->
     <!-- endbuild -->
 
-        <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <script src="scripts/app.js"></script>
-        <script src="scripts/config.js"></script>
-        <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/controllers/viz.js"></script>
-        <script src="scripts/controllers/update.js"></script>
-        <script src="scripts/services/apiservice.js"></script>
-        <script src="scripts/filters/parsegdocdata.js"></script>
-        <script src="scripts/controllers/mockup.js"></script>
-        <!-- endbuild -->
+    <!-- build:js({.tmp,app}) libs/libs.js -->
+    <script src="scripts/libs/networkCluster.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/config.js"></script>
+    <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/viz.js"></script>
+    <script src="scripts/controllers/update.js"></script>
+    <script src="scripts/services/apiservice.js"></script>
+    <script src="scripts/filters/parsegdocdata.js"></script>
+    <script src="scripts/controllers/mockup.js"></script>
+    <script src="scripts/directives/graph.js"></script>
+    <!-- endbuild -->
 </body>
 </html>

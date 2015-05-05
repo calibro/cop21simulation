@@ -1,3 +1,7 @@
+html, body{
+  height:100%;
+}
+
 .header {
 }
 
@@ -27,10 +31,10 @@
 }
 
 .viz-main {
-   height:1000px;   
+   height:1000px;
 }
 
 .viz-secondary {
    height:1000px;
-   background-color: #333333;  
+   background-color: #333333;
 }
