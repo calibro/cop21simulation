@@ -10,6 +10,7 @@
 angular.module('cop21App')
   .controller('VizCtrl', function ($scope, apiService) {
     $scope.graphData;
+    $scope.sankeyData;
 
     apiService.getFile('data/net.json').then(
       function(data){
@@ -19,4 +20,14 @@ angular.module('cop21App')
         console.log(error)
       }
     );
+
+    apiService.getFile('data/sankey.json').then(
+      function(data){
+        $scope.sankeyData = data;
+      },
+      function(error){
+        console.log(error)
+      }
+    );
+
   });
