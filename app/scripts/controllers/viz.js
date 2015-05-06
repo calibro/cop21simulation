@@ -8,7 +8,7 @@
  * Controller of the cop21App
  */
 angular.module('cop21App')
-  .controller('VizCtrl', function ($scope, apiService) {
+  .controller('VizCtrl', function ($scope, apiService, parseSankeyFilter) {
     $scope.graphData;
     $scope.sankeyData;
 
@@ -23,7 +23,7 @@ angular.module('cop21App')
 
     apiService.getFile('data/sankey.json').then(
       function(data){
-        $scope.sankeyData = data;
+        $scope.sankeyData = parseSankeyFilter(data);
       },
       function(error){
         console.log(error)

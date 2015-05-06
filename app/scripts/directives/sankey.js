@@ -12,15 +12,15 @@ angular.module('cop21App')
       restrict: 'A',
       link: function postLink(scope, element, attrs) {
 
-        // var sankey = cop21.sankey()
-        // .width(element.width())
-        // .height(element.height())
-        //
-        // var chart = d3.select(element[0])
+        var sankey = cop21.sankey()
+        .width(element.width())
+        .height(element.height())
+
+        var chart = d3.select(element[0])
 
         scope.$watch("sankeyData", function(newValue, oldValue){
           if(newValue != oldValue){
-            //chart.datum(newValue).call(sankey)
+            chart.datum(newValue).call(sankey)
             }
           })
 
