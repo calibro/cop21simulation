@@ -49,3 +49,9 @@ html, body{
 .link:hover {
   stroke-opacity: 1;
 }
+
+.tabLabels{
+  font-family: 'Alegreya Sans', sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+}
