@@ -1,20 +1,27 @@
 <div class="container-fluid">
 	<div class="row header">
-		<div class="col-md-8 header-main">
-			Delegations Graph
-		</div>
 		<div class="col-md-4 header-secondary">
 			Delegations Flows
 		</div>
+		<div class="col-md-8 header-main">
+			Delegations Graph
+		</div>
 	</div>
 </div>
-<div class="container-fluid" style="height:calc(100% - 50px)">
+<div class="container-fluid" style="height:calc(100% - 100px)">
 	<div class="row viz" style="height:100%">
+		<div class="col-md-4 viz-secondary" style="height:100%">
+			<div sankey style="height:100%"></div>
+		</div>
 		<div class="col-md-8 viz-main" style="height:100%">
       <div graph style="height:100%"></div>
 		</div>
-		<div class="col-md-4 viz-secondary" style="height:100%">
-			<div sankey style="height:100%"></div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<pagination items-per-page="1" total-items="steps.length" ng-model="currentStep" ng-change="updateData()"></pagination>
 		</div>
 	</div>
 </div>

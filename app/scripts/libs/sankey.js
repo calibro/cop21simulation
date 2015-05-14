@@ -58,25 +58,38 @@
              .layout(32);
 
        // add in the links
-         var link = chart.append("g").selectAll(".link")
+         var link = chart.selectAll(".link")
              .data(data.links)
-           .enter().append("path")
+
+           link.transition().duration(200)
+             .attr("d", path)
+             .style("stroke-width", function(d) { return Math.max(1, d.dy); })
+             .sort(function(a, b) { return b.dy - a.dy; });
+
+           link.enter().append("path")
              .attr("class", "link")
              .attr("d", path)
              .style("stroke-width", function(d) { return Math.max(1, d.dy); })
              .sort(function(a, b) { return b.dy - a.dy; });
 
+          link.exit().remove()
+
        // add the link titles
          link.append("title")
                .text(function(d) {
-                 
+
            		return "from table " + d.source.name.split("_")[1] + " to table " +
                        d.target.name.split("_")[1] + "\n" + format(d.value); });
 
        // add in the nodes
-         var node = chart.append("g").selectAll(".node")
-             .data(data.nodes)
-           .enter().append("g")
+         var node = chart.selectAll(".node")
+             .data(data.nodes, function(d){return d.name})
+
+        node.transition().duration(200)
+                .attr("transform", function(d) {
+          		  return "translate(" + d.x + "," + d.y + ")"; })
+
+          node.enter().append("g")
              .attr("class", "node")
              .attr("transform", function(d) {
        		  return "translate(" + d.x + "," + d.y + ")"; })
@@ -86,6 +99,7 @@
        	// 	  this.parentNode.appendChild(this); })
           //    .on("drag", dragmove));
 
+          node.exit().remove()
        // add the rectangles for the nodes
          node.append("rect")
              .attr("height", function(d) { return d.dy; })

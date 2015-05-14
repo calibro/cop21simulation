@@ -8,7 +8,9 @@
         width = 600,
         delRadius = 6,
         delPadding = 2,
-        tabRadius = 20;
+        tabRadius = 20,
+        allDelegationsMap,
+        delegationsHistory;
 
 
     function network(selection){
@@ -61,7 +63,6 @@
             .links(links)
             .size([chartWidth, chartHeight]);
 
-        forceTables.start();
 
         var force = d3.layout.force()
             .gravity(0)
@@ -69,26 +70,27 @@
             .nodes(nodes)
             .size([chartWidth, chartHeight]);
 
-        //force.start();
+        force.stop();
+        forceTables.stop();
 
         force.on('tick', function(e) {
 
-          var q = d3.geom.quadtree(nodes.concat(nodesTables)),
+
+          var q = d3.geom.quadtree(force.nodes().concat(forceTables.nodes())),
               k = e.alpha * 0.1,
               i = -1,
-              n = nodes.length,
+              n = force.nodes().length,
               o;
 
           while (++i < n) {
-            o = nodes[i];
-            //if (o.fixed) continue;
-            c = nodesTables.filter(function(d){return d.id == o.table})[0];
-            o.x += (c.x - o.x) * k;
-            o.y += (c.y - o.y) * k;
+            //o = nodes[i];
+            o = force.nodes()[i]
+            c = forceTables.nodes().filter(function(d){return d.id == o.table})[0];
+            o.x += (c.x - o.x)* k;
+            o.y += (c.y - o.y)* k;
             q.visit(collide(o));
           }
 
-          //chart.selectAll('.del')
           delNodes
               .attr('cx', function(d) { return d.x; })
               .attr('cy', function(d) { return d.y; });
@@ -98,14 +100,18 @@
               .attr('cy', function(d) { return d.y; });
         });
 
-        forceTables.on('tick', function(){
+        forceTables.on('tick', function(e){
 
           force.start();
-          var q = d3.geom.quadtree(nodesTables),
-              i = 0,
-              n = nodesTables.length;
+          var q = d3.geom.quadtree(forceTables.nodes()),
+              i = -1,
+              //n = nodesTables.length;
+              n = forceTables.nodes().length;
 
-          while (++i < n) {q.visit(collide(nodesTables[i]));}
+          while (++i < n) {
+            //q.visit(collide(nodesTables[i]));
+            q.visit(collide(forceTables.nodes()[i]));
+            }
 
           tabNodes
           .attr('cx', function(d) { d.x = Math.max(d.radius, Math.min(chartWidth - d.radius-delPadding-(delRadius*2), d.x)); return d.x; })
@@ -122,28 +128,29 @@
             return 'translate(' + d.x + ',' + d.y + ')'
             })
 
-              chart.selectAll('.links').attr('x1', function(d) { return d.source.x; })
-          .attr('y1', function(d) { return d.source.y; })
-          .attr('x2', function(d) { return d.target.x; })
-          .attr('y2', function(d) { return d.target.y; });
+          //     chart.selectAll('.links').attr('x1', function(d) { return d.source.x; })
+          // .attr('y1', function(d) { return d.source.y; })
+          // .attr('x2', function(d) { return d.target.x; })
+          // .attr('y2', function(d) { return d.target.y; });
 
         });
 
         forceTables.on('end', function(){
-          force.resume();
+          //force.start();
         });
 
-        var link = chart.selectAll('.links')
-                    .data(links)
-                  .enter().append('line')
-                  .attr('class', 'links')
-                  .attr('stroke', '#4d4d4d')
-                  .attr('stroke-opacity', 1)
+        // var link = chart.selectAll('.links')
+        //             .data(links)
+        //           .enter().append('line')
+        //           .attr('class', 'links')
+        //           .attr('stroke', '#4d4d4d')
+        //           .attr('stroke-opacity', 1)
 
         //delegation are always the same we don't need to remove them
 
         var delNodes = chart.selectAll('.del')
-                                .data(nodes, function(d){return d.delegation});
+                                //.data(nodes, function(d){return d.delegation});
+                                .data(force.nodes(), function(d){return d.delegation});
 
 
         delNodes.enter().append('circle')
@@ -151,23 +158,33 @@
             .attr('r', delRadius - delPadding)
             .attr('fill', '#00ffff')
             .attr('fill-opacity', 0.5)
+            .attr('cx', 0)
+            .attr('cy', 0)
             .each(function(d){
                  $(this).popover('destroy')
-                 $(this).popover({title: d.delegation, content:'il contenuto del popover', placement:'auto', container: 'body'})
+                 $(this).popover({
+                   title: allDelegationsMap[d.delegation],
+                   content:delegationsHistory.filter(function(e){return e.delegation == d.delegation})[0].history.join(" > "),
+                   placement:'auto',
+                   container: 'body',
+                   trigger: 'hover',
+                   html: true
+                   })
                });
 
-    var drag = d3.behavior.drag()
-    .on('drag', dragmove);
-
-    function dragmove(d) {
-      d3.select(this)
-        .attr('cx', d.x = Math.max(d.radius, Math.min(chartWidth - d.radius, d3.event.x)))
-        .attr('cy', d.y = Math.max(d.radius, Math.min(chartHeight - d.radius, d3.event.y)));
-        force.resume()
-    }
+    // var drag = d3.behavior.drag()
+    // .on('drag', dragmove);
+    //
+    // function dragmove(d) {
+    //   d3.select(this)
+    //     .attr('cx', d.x = Math.max(d.radius, Math.min(chartWidth - d.radius, d3.event.x)))
+    //     .attr('cy', d.y = Math.max(d.radius, Math.min(chartHeight - d.radius, d3.event.y)));
+    //     force.resume()
+    // }
 
         var tabNodes = chart.selectAll('.tables')
-                            .data(nodesTables, function(d){return d.id});
+                            //.data(nodesTables, function(d){return d.id});
+                            .data(forceTables.nodes(), function(d){return d.id});
 
       tabNodes.transition().duration(200)
       .attr('fill-opacity', function(d){return d.degree > 5 ? 1 : 0})
@@ -181,7 +198,9 @@
       .attr('fill-opacity', function(d){return d.degree > 5 ? 1 : 0})
       .attr('stroke', function(d){return d.degree > 5 ? 'none' : '#4d4d4d'})
       .attr('stroke-width', function(d){return d.degree > 5 ? 0 : 1})
-      .call(drag)
+      .attr('cx', 0)
+      .attr('cy', 0)
+      //.call(drag)
 
 
       tabNodes.exit()
@@ -192,7 +211,10 @@
 
 
 
-      var delPointNodes = chart.selectAll('.delPoint').data(nodes, function(d){return d.delegation});
+      var delPointNodes = chart.selectAll('.delPoint').data(force.nodes(), function(d){return d.delegation});
+
+      // delPointNodes.transition().duration(200)
+      //     .attr('fill', function(d) { return 'black'; });
 
       delPointNodes
       .enter().append('circle')
@@ -200,14 +222,22 @@
     .attr('r', 0.5)
     .attr('fill', function(d) { return 'black'; });
 
-    var tableLabels = chart.selectAll('.tabLabels').data(nodesTables, function(d){return d.id});
+    delPointNodes.exit().remove()
 
-    var tGroup = tableLabels
+    var tableLabels = chart.selectAll('.tabLabels').data(forceTables.nodes(), function(d){return d.id});
+
+    tableLabels.transition().duration(200).attr('opacity', function(d){return d.degree > 5 ? 1 : 0.5})
+
+    tableLabels
     .enter().append('g')
     .attr('class', 'tabLabels')
     .attr('opacity', function(d){return d.degree > 5 ? 1 : 0.5})
 
-    tGroup
+    tableLabels.exit().remove()
+
+    tableLabels.select('text').remove()
+
+    tableLabels
     .append('text')
     .attr('text-anchor', 'middle')
     .attr('dy', '0.3em')
@@ -217,6 +247,7 @@
     })
     .call(wrap, 100);
 
+    forceTables.start();
 
       }); //end selection
     }; // end network
@@ -301,6 +332,18 @@
   network.tabRadius = function(x){
     if (!arguments.length) return tabRadius;
     tabRadius = x;
+    return network;
+  }
+
+  network.allDelegationsMap = function(x){
+    if (!arguments.length) return allDelegationsMap;
+    allDelegationsMap = x;
+    return network;
+  }
+
+  network.delegationsHistory = function(x){
+    if (!arguments.length) return delegationsHistory;
+    delegationsHistory = x;
     return network;
   }
 

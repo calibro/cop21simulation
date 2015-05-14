@@ -20,9 +20,14 @@
 
        scope.$watch("update", function(newValue, oldValue){
          if(newValue != oldValue){
-           chart.datum(scope.graphData).call(net)
+           chart.datum(scope.graphData)
+            .call(
+              net
+                .allDelegationsMap(scope.allDelegationsMap)
+                .delegationsHistory(scope.delegationsHistory)
+              )
            }
-         })
+         });
       }
     };
   });

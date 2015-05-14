@@ -16,11 +16,12 @@ angular.module('cop21App')
         .width(element.width())
         .height(element.height())
 
+
         var chart = d3.select(element[0])
 
-        scope.$watch("sankeyData", function(newValue, oldValue){
+        scope.$watch("update", function(newValue, oldValue){
           if(newValue != oldValue){
-            chart.datum(newValue).call(sankey)
+            chart.datum(scope.sankeyData).call(sankey)
             }
           })
 
