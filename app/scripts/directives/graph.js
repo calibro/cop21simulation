@@ -11,17 +11,16 @@
    return {
      restrict: 'A',
      link: function postLink(scope, element, attrs) {
-       
+
        var net = cop21.network()
        .width(element.width())
        .height(element.height())
 
        var chart = d3.select(element[0])
 
-       scope.$watch("graphData", function(newValue, oldValue){
+       scope.$watch("update", function(newValue, oldValue){
          if(newValue != oldValue){
-           console.log(newValue)
-           chart.datum(newValue).call(net)
+           chart.datum(scope.graphData).call(net)
            }
          })
       }

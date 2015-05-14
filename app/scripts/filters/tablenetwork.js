@@ -57,7 +57,6 @@ angular.module('cop21App')
       output.nodes = tables;
       output.links = links;
 
-      console.log(output)
       return output;
     };
   });

@@ -36,6 +36,18 @@ angular.module('cop21App')
   });
 
   return deferred.promise;
-}
+},
+  getTable: function(id){
+    var deferred = $q.defer();
+    Tabletop.init({
+          key: id,
+          simpleSheet: true,
+          parseNumbers: true,
+          callback: function(data, tabletop) {
+            deferred.resolve(data);
+          }
+        });
+        return deferred.promise;
+  }
     };
   });

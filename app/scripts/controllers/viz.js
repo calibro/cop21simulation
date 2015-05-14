@@ -8,44 +8,53 @@
  * Controller of the cop21App
  */
 angular.module('cop21App')
-  .controller('VizCtrl', function ($scope, EDGES_ID, TABLES_ID, DELEGATIONS_ID, apiService, parseGdocDataFilter, parseSankeyFilter, tableNetworkFilter) {
-    $scope.graphData;
+  .controller('VizCtrl', function ($scope, EDGES_ID, TABLES_ID, DELEGATIONS_ID, apiService, getStepsFilter, parseSankeyFilter, tableNetworkFilter) {
+
+    $scope.allTables;
+    $scope.allDelegations;
+    $scope.allEdges;
+
+    $scope.steps;
+    $scope.lastSteps;
+    $scope.currentStep;
+
+    $scope.graphData = {};
     $scope.sankeyData;
 
-    apiService.getGoogleDriveDoc(TABLES_ID, {tqx:'responseHandler:JSON_CALLBACK'}).then(
-      function(data){
-        var tables = parseGdocDataFilter(data);
-        //console.log(data)
-        apiService.getGoogleDriveDoc(DELEGATIONS_ID, {tqx:'responseHandler:JSON_CALLBACK'}).then(
-          function(datac){
-            console.log(datac)
-            //var testc = parseGdocDataFilter(datac);
-            // tableNetworkFilter(test, tables);
-            //console.log(test)
+    $scope.update = true;
 
-            apiService.getGoogleDriveDoc(EDGES_ID, {tqx:'responseHandler:JSON_CALLBACK'}).then(
-              function(data){
-                var test = parseGdocDataFilter(data);
-
-                console.log(tableNetworkFilter(test, tables));
-
-              },
-              function(err){
-                console.log(err);
-              }
-            );
-
+    apiService.getTable(DELEGATIONS_ID).then(
+      function(delegationsData){
+        $scope.allDelegations = delegationsData;
+    apiService.getTable(TABLES_ID).then(
+      function(tablesData){
+        $scope.allTables = tablesData;
+        apiService.getTable(EDGES_ID).then(
+          function(edgesData){
+            $scope.steps = getStepsFilter(edgesData);
+            $scope.lastSteps = $scope.steps[$scope.steps.length-1];
+            $scope.currentStep = $scope.lastSteps;
+            console.log($scope.steps, $scope.lastSteps, $scope.currentStep)
+            $scope.allEdges = edgesData;
+            $scope.graphData.tables = tableNetworkFilter($scope.allEdges.filter(function(d){return d.step >= $scope.currentStep-1;}), $scope.allTables);
+            $scope.graphData.delegations = $scope.allEdges.filter(function(d){return d.step == $scope.currentStep;});
+            $scope.sankeyData = parseSankeyFilter($scope.allEdges.filter(function(d){return d.step >= $scope.currentStep-1;}))
+            $scope.update = $scope.update ? false : true;
           },
           function(err){
-            console.log(err);
+            console.log(err)
           }
         );
-
       },
       function(err){
-        console.log(err);
+        console.log(err)
       }
     );
+  },
+  function(err){
+    console.log(err)
+  }
+  );
 
     // apiService.getFile('data/net.json').then(
     //   function(data){

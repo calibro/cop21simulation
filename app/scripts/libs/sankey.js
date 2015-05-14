@@ -69,8 +69,9 @@
        // add the link titles
          link.append("title")
                .text(function(d) {
-           		return "from table " + d.source.name.split("_")[0] + " to table " +
-                       d.target.name.split("_")[0] + "\n" + format(d.value); });
+                 
+           		return "from table " + d.source.name.split("_")[1] + " to table " +
+                       d.target.name.split("_")[1] + "\n" + format(d.value); });
 
        // add in the nodes
          var node = chart.append("g").selectAll(".node")
@@ -105,7 +106,7 @@
              .attr("dy", ".35em")
              .attr("text-anchor", "end")
              .attr("transform", null)
-             .text(function(d) { return "table " + d.name.split("_")[0]; })
+             .text(function(d) { return "table " + d.name.split("_")[1]; })
            .filter(function(d) { return d.x < width / 2; })
              .attr("x", 6 + sankey.nodeWidth())
              .attr("text-anchor", "start");

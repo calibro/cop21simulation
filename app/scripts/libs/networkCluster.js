@@ -19,57 +19,19 @@
             chartWidth = width - margin.left - margin.right,
             chartHeight = height - margin.top - margin.bottom;
 
-        //to be removed start
-        data.nodes.forEach(function(d){
-            d.radius = delRadius;
-            d.type = parseInt(d.type);
-        });
+        var nodes = data.delegations,
+            links = data.tables.links,
+            nodesTables = data.tables.nodes;
 
-        var nodes = data.nodes,
-            links = data.links;
+        nodesTables.forEach(function(d){
+          d.type = d.id;
+          d.radius = tabRadius;
+          d.degree = 6;
+        })
 
-        var nodesTables = [{'id':1,'name':'Equatorial Guinea','type':1,'radius':tabRadius, degree:6},
-        {'id':2,'name':'Yemen','type':2,'radius':tabRadius, degree:6},
-        {'id':3,'name':'Canada','type':3,'radius':tabRadius, degree:6},
-        {'id':4,'name':'Australia','type':4,'radius':tabRadius, degree:6},
-        {'id':5,'name':'Japan','type':5,'radius':tabRadius, degree:6},
-        {'id':6,'name':'Russia','type':6,'radius':tabRadius, degree:6},
-        {'id':7,'name':'Russia','type':7,'radius':tabRadius, degree:6},
-        {'id':8,'name':'Indonesia','type':8,'radius':tabRadius, degree:6},
-        {'id':9,'name':'Pakistan','type':9,'radius':tabRadius, degree:6},
-        {'id':10,'name':'China','type':10,'radius':tabRadius, degree:6},
-        {'id':11,'name':'Honduras','type':11,'radius':tabRadius, degree:6},
-        {'id':12,'name':'Ukraine','type':12,'radius':tabRadius, degree:2},
-        {'id':13,'name':'China','type':13,'radius':tabRadius, degree:6},
-        {'id':14,'name':'Japan','type':14,'radius':tabRadius, degree:6},
-        {'id':15,'name':'Philippines','type':15,'radius':tabRadius, degree:6},
-        {'id':16,'name':'Belarus','type':16,'radius':tabRadius, degree:6},
-        {'id':17,'name':'China','type':17,'radius':tabRadius, degree:6},
-        {'id':18,'name':'Iran','type':18,'radius':tabRadius, degree:2},
-        {'id':19,'name':'Indonesia','type':19,'radius':tabRadius, degree:6},
-        {'id':20,'name':'China','type':20,'radius':tabRadius, degree:6},
-        {'id':21,'name':'China','type':21,'radius':tabRadius, degree:6},
-        {'id':22,'name':'Sweden','type':22,'radius':tabRadius, degree:6},
-        {'id':23,'name':'Philippines','type':23,'radius':tabRadius, degree:6},
-        {'id':24,'name':'Czech Republic','type':24,'radius':tabRadius, degree:6},
-        {'id':25,'name':'Costa Rica','type':25,'radius':tabRadius, degree:6},
-        {'id':26,'name':'Bhutan','type':26,'radius':tabRadius, degree:6},
-        {'id':27,'name':'Palestinian Territory','type':27,'radius':tabRadius, degree:6},
-        {'id':28,'name':'Sweden','type':28,'radius':tabRadius, degree:6},
-        {'id':29,'name':'Czech Republic','type':29,'radius':tabRadius, degree:6},
-        {'id':30,'name':'Portugal','type':30,'radius':tabRadius, degree:6},
-        {'id':31,'name':'China','type':31,'radius':tabRadius, degree:6},
-        {'id':32,'name':'Kuwait','type':32,'radius':tabRadius, degree:6},
-        {'id':33,'name':'China','type':33,'radius':tabRadius, degree:6},
-        {'id':34,'name':'Brazil','type':34,'radius':tabRadius, degree:6},
-        {'id':35,'name':'Philippines','type':35,'radius':tabRadius, degree:6},
-        {'id':36,'name':'Peru','type':36,'radius':tabRadius, degree:6},
-        {'id':37,'name':'Brazil','type':37,'radius':tabRadius, degree:6},
-        {'id':38,'name':'Peru','type':38,'radius':tabRadius, degree:6},
-        {'id':39,'name':'Azerbaijan','type':39,'radius':tabRadius, degree:6},
-        {'id':40,'name':'Poland','type':40,'radius':tabRadius, degree:6}];
-
-        //to be removed end
+        nodes.forEach(function(d){
+          d.radius = delRadius;
+        })
 
         if (selection.select('svg').empty()){
           chart = selection.append('svg')
@@ -93,8 +55,8 @@
 
         var forceTables = d3.layout.force()
             .charge(-2000)
-            .linkDistance(function(d){return d.value*15 < 40 ? 40 : d.value*15;})
-            .gravity(8)
+            .linkDistance(function(d){return d.value*15 < 40 ? 10 : d.value*15;})
+            .gravity(0.5)
             .nodes(nodesTables)
             .links(links)
             .size([chartWidth, chartHeight]);
@@ -113,14 +75,14 @@
 
           var q = d3.geom.quadtree(nodes.concat(nodesTables)),
               k = e.alpha * 0.1,
-              i = 0,
+              i = -1,
               n = nodes.length,
               o;
 
           while (++i < n) {
             o = nodes[i];
             //if (o.fixed) continue;
-            c = nodesTables[o.type];
+            c = nodesTables.filter(function(d){return d.id == o.table})[0];
             o.x += (c.x - o.x) * k;
             o.y += (c.y - o.y) * k;
             q.visit(collide(o));
@@ -160,38 +122,38 @@
             return 'translate(' + d.x + ',' + d.y + ')'
             })
 
-          //     chart.selectAll('.links').attr('x1', function(d) { return d.source.x; })
-          // .attr('y1', function(d) { return d.source.y; })
-          // .attr('x2', function(d) { return d.target.x; })
-          // .attr('y2', function(d) { return d.target.y; });
+              chart.selectAll('.links').attr('x1', function(d) { return d.source.x; })
+          .attr('y1', function(d) { return d.source.y; })
+          .attr('x2', function(d) { return d.target.x; })
+          .attr('y2', function(d) { return d.target.y; });
 
         });
 
         forceTables.on('end', function(){
-          //force.resume();
+          force.resume();
         });
 
-        // var link = chart.selectAll('.links')
-        //             .data(links)
-        //           .enter().append('line')
-        //           .attr('class', 'links')
-        //           .attr('stroke', '#4d4d4d')
-        //           .attr('stroke-opacity', 0.2)
+        var link = chart.selectAll('.links')
+                    .data(links)
+                  .enter().append('line')
+                  .attr('class', 'links')
+                  .attr('stroke', '#4d4d4d')
+                  .attr('stroke-opacity', 1)
 
         //delegation are always the same we don't need to remove them
 
         var delNodes = chart.selectAll('.del')
-                                .data(nodes, function(d){return d.id});
+                                .data(nodes, function(d){return d.delegation});
 
 
         delNodes.enter().append('circle')
             .attr('class', 'del')
-            .attr('r', function(d) { return d.radius - delPadding; })
+            .attr('r', delRadius - delPadding)
             .attr('fill', '#00ffff')
             .attr('fill-opacity', 0.5)
             .each(function(d){
                  $(this).popover('destroy')
-                 $(this).popover({title: d.name, content:'il contenuto del popover', placement:'auto', container: 'body'})
+                 $(this).popover({title: d.delegation, content:'il contenuto del popover', placement:'auto', container: 'body'})
                });
 
     var drag = d3.behavior.drag()
@@ -230,7 +192,7 @@
 
 
 
-      var delPointNodes = chart.selectAll('.delPoint').data(nodes, function(d){return d.id});
+      var delPointNodes = chart.selectAll('.delPoint').data(nodes, function(d){return d.delegation});
 
       delPointNodes
       .enter().append('circle')
@@ -270,7 +232,7 @@
           var  word,
             line = [],
             lineNumber = 0,
-            lineHeight = 0.8, // ems
+            lineHeight = 0.7, // ems
             y = text.attr('y'),
             dy = parseFloat(text.attr('dy')),
             tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em');
@@ -281,7 +243,7 @@
             line.pop();
             tspan.text(line.join(' '));
             line = [word];
-            tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word);
+            tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', lineHeight + dy + 'em').text(word);
           }
         }
       });
