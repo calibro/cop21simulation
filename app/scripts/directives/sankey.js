@@ -21,7 +21,7 @@ angular.module('cop21App')
 
         scope.$watch("update", function(newValue, oldValue){
           if(newValue != oldValue){
-            chart.datum(scope.sankeyData).call(sankey)
+            chart.datum(scope.sankeyData).call(sankey.allTablesMap(scope.allTablesMap))
             }
           })
 

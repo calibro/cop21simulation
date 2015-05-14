@@ -8,7 +8,8 @@
         width = 600,
         delRadius = 6,
         delPadding = 2,
-        tabRadius = 20;
+        tabRadius = 20,
+        allTablesMap;
 
 
     function sankey(selection){
@@ -70,16 +71,25 @@
              .attr("class", "link")
              .attr("d", path)
              .style("stroke-width", function(d) { return Math.max(1, d.dy); })
-             .sort(function(a, b) { return b.dy - a.dy; });
+             .sort(function(a, b) { return b.dy - a.dy; })
+             .each(function(d){
+
+                  $(this).tooltip('destroy')
+                  $(this).tooltip({
+                    title:tText(d),
+                    placement:'top',
+                    container: 'body'
+                    })
+                });
 
           link.exit().remove()
 
        // add the link titles
-         link.append("title")
-               .text(function(d) {
-
-           		return "from table " + d.source.name.split("_")[1] + " to table " +
-                       d.target.name.split("_")[1] + "\n" + format(d.value); });
+        //  link.append("title")
+        //        .text(function(d) {
+        //    		return "from table " + d.source.name.split("_")[1] + " to table " +
+        //                d.target.name.split("_")[1] + "\n" + format(d.value);
+        //           });
 
        // add in the nodes
          var node = chart.selectAll(".node")
@@ -92,42 +102,55 @@
           node.enter().append("g")
              .attr("class", "node")
              .attr("transform", function(d) {
-       		  return "translate(" + d.x + "," + d.y + ")"; })
-          //  .call(d3.behavior.drag()
-          //    .origin(function(d) { return d; })
-          //    .on("dragstart", function() {
-       	// 	  this.parentNode.appendChild(this); })
-          //    .on("drag", dragmove));
+       		  return "translate(" + d.x + "," + d.y + ")";
+             })
 
           node.exit().remove()
        // add the rectangles for the nodes
          node.append("rect")
              .attr("height", function(d) { return d.dy; })
              .attr("width", sankey.nodeWidth())
-            //  .style("fill", function(d) {
-       		 //  return d.color = color(d.name.replace(/ .*/, "")); })
             .style("fill", "black")
-            //  .style("stroke", function(d) {
-       		 //  return d3.rgb(d.color).darker(2); })
-           .append("title")
-             .text(function(d) {
-       		  return d.name + "\n" + format(d.value); });
+            .each(function(d){
+                 $(this).popover('destroy')
+                 $(this).popover({
+                   title: allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]],
+                   content:format(d.value),
+                   placement:'auto left',
+                   container: 'body',
+                   trigger: 'hover'
+                   })
+               });
+
 
        // add in the title for the nodes
          node.append("text")
              .attr("x", -6)
              .attr("y", function(d) { return d.dy / 2; })
              .attr("dy", ".35em")
+             .attr('class', 'tabLabels')
              .attr("text-anchor", "end")
              .attr("transform", null)
-             .text(function(d) { return "table " + d.name.split("_")[1]; })
+             .text(function(d) { if(d.value > 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
            .filter(function(d) { return d.x < width / 2; })
              .attr("x", 6 + sankey.nodeWidth())
-             .attr("text-anchor", "start");
+             .attr("text-anchor", "start")
+             .text(null)
 
 
       }); //end selection
     } // end sankey
+
+  function tText(d){
+    var source = d.source.name.split("_")[1],
+        target = d.target.name.split("_")[1];
+
+    if(source == target){
+      return d.value + ' delegation(s) stayed at table ' + target
+    }else{
+      return d.value + ' delegation(s) moved from table ' + source + ' to table ' + target
+    }
+  };
 
   sankey.height = function(x){
     if (!arguments.length) return height;
@@ -138,6 +161,12 @@
   sankey.width = function(x){
     if (!arguments.length) return width;
     width = x;
+    return sankey;
+  }
+
+  sankey.allTablesMap = function(x){
+    if (!arguments.length) return allTablesMap;
+    allTablesMap = x;
     return sankey;
   }
 

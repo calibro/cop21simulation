@@ -158,8 +158,6 @@
             .attr('r', delRadius - delPadding)
             .attr('fill', '#00ffff')
             .attr('fill-opacity', 0.5)
-            .attr('cx', 0)
-            .attr('cy', 0)
             .each(function(d){
                  $(this).popover('destroy')
                  $(this).popover({
