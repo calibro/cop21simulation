@@ -21,6 +21,15 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-12">
+			<button type="button" class="btn" ng-click="autoplay()">
+			Play
+			</button>
+			<button type="button" class="btn" ng-click="stopplay()">
+			Stop
+			</button>
+			<button type="button" class="btn" ng-click="updateStep()">
+			Update
+			</button>
 			<pagination items-per-page="1" total-items="steps.length" ng-model="currentStep" ng-change="updateData()"></pagination>
 		</div>
 	</div>

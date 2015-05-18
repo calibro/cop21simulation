@@ -40,10 +40,18 @@ angular.module('cop21App')
         }
       });
 
+      var lastForDeg = input.filter(function(d){return d.step.toString() == lastSteps[1]});
+
+      var nestedDegTable = d3.nest()
+        .key(function(d){return d.table})
+        .rollup(function(d){return d.length})
+        .entries(lastForDeg)
+
       var mapTable = {};
 
       tables.forEach(function(d,i){
         mapTable[d.id] = i;
+        d.degree = nestedDegTable.filter(function(e){return d.id == e.key})[0].values;
       });
 
 

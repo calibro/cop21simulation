@@ -9,8 +9,17 @@
         delRadius = 6,
         delPadding = 2,
         tabRadius = 20,
+        showLabel = true,
         allDelegationsMap,
-        delegationsHistory;
+        delegationsHistory,
+        forceTables = d3.layout.force()
+            .charge(-2000)
+            .linkDistance(function(d){return d.value*15 < 40 ? 10 : d.value*15;})
+            .gravity(0.5),
+        force = d3.layout.force()
+                .alpha(0.00501)
+                .gravity(0)
+                 .charge(0);
 
 
     function network(selection){
@@ -28,7 +37,6 @@
         nodesTables.forEach(function(d){
           d.type = d.id;
           d.radius = tabRadius;
-          d.degree = 6;
         })
 
         nodes.forEach(function(d){
@@ -55,23 +63,18 @@
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
         }
 
-        var forceTables = d3.layout.force()
-            .charge(-2000)
-            .linkDistance(function(d){return d.value*15 < 40 ? 10 : d.value*15;})
-            .gravity(0.5)
+        forceTables.stop();
+        force.stop();
+
+        forceTables
             .nodes(nodesTables)
             .links(links)
             .size([chartWidth, chartHeight]);
 
 
-        var force = d3.layout.force()
-            .gravity(0)
-            .charge(0)
-            .nodes(nodes)
-            .size([chartWidth, chartHeight]);
-
-        force.stop();
-        forceTables.stop();
+        force
+          .nodes(nodes)
+          .size([chartWidth, chartHeight]);
 
         force.on('tick', function(e) {
 
@@ -105,21 +108,20 @@
           force.start();
           var q = d3.geom.quadtree(forceTables.nodes()),
               i = -1,
-              //n = nodesTables.length;
               n = forceTables.nodes().length;
 
           while (++i < n) {
-            //q.visit(collide(nodesTables[i]));
             q.visit(collide(forceTables.nodes()[i]));
             }
 
           tabNodes
-          .attr('cx', function(d) { d.x = Math.max(d.radius, Math.min(chartWidth - d.radius-delPadding-(delRadius*2), d.x)); return d.x; })
-          .attr('cy', function(d) { d.y = Math.max(d.radius, Math.min(chartHeight - d.radius-delPadding-(delRadius*2), d.y)); return d.y;});
+            .attr('cx', function(d) { d.x = Math.max(d.radius, Math.min(chartWidth - d.radius-delPadding-(delRadius*2), d.x)); return d.x; })
+            .attr('cy', function(d) { d.y = Math.max(d.radius, Math.min(chartHeight - d.radius-delPadding-(delRadius*2), d.y)); return d.y;});
 
-          // tableLabels
-          // .attr('x', function(d) { d.x = Math.max(d.radius, Math.min(chartWidth - d.radius-delPadding-(delRadius*2), d.x)); return d.x; })
-          // .attr('y', function(d) { d.y = Math.max(d.radius, Math.min(chartHeight - d.radius-delPadding-(delRadius*2), d.y)); return d.y;});
+
+          tableLabels
+          .attr('x', function(d) { d.x = Math.max(d.radius, Math.min(chartWidth - d.radius-delPadding-(delRadius*2), d.x)); return d.x; })
+          .attr('y', function(d) { d.y = Math.max(d.radius, Math.min(chartHeight - d.radius-delPadding-(delRadius*2), d.y)); return d.y;});
 
           tableLabels
           .attr('transform', function(d) {
@@ -149,7 +151,6 @@
         //delegation are always the same we don't need to remove them
 
         var delNodes = chart.selectAll('.del')
-                                //.data(nodes, function(d){return d.delegation});
                                 .data(force.nodes(), function(d){return d.delegation});
 
 
@@ -170,44 +171,32 @@
                    })
                });
 
-    // var drag = d3.behavior.drag()
-    // .on('drag', dragmove);
-    //
-    // function dragmove(d) {
-    //   d3.select(this)
-    //     .attr('cx', d.x = Math.max(d.radius, Math.min(chartWidth - d.radius, d3.event.x)))
-    //     .attr('cy', d.y = Math.max(d.radius, Math.min(chartHeight - d.radius, d3.event.y)));
-    //     force.resume()
-    // }
 
         var tabNodes = chart.selectAll('.tables')
                             //.data(nodesTables, function(d){return d.id});
                             .data(forceTables.nodes(), function(d){return d.id});
 
       tabNodes.transition().duration(200)
-      .attr('fill-opacity', function(d){return d.degree > 5 ? 1 : 0})
-      .attr('stroke', function(d){return d.degree > 5 ? 'none' : '#4d4d4d'})
-      .attr('stroke-width', function(d){return d.degree > 5 ? 0 : 1})
+      .attr('fill-opacity', function(d){return d.degree >= 5 ? 1 : 0})
+      .attr('stroke', function(d){return d.degree >= 5 ? 'none' : '#4d4d4d'})
+      .attr('stroke-width', function(d){return d.degree >= 5 ? 0 : 1})
 
       tabNodes.enter().append('circle')
       .attr('class', 'tables')
       .attr('r', function(d){return d.radius-delPadding;})
       .attr('fill', function(d) { return '#4d4d4d' })
-      .attr('fill-opacity', function(d){return d.degree > 5 ? 1 : 0})
-      .attr('stroke', function(d){return d.degree > 5 ? 'none' : '#4d4d4d'})
-      .attr('stroke-width', function(d){return d.degree > 5 ? 0 : 1})
+      .attr('fill-opacity', function(d){return d.degree >= 5 ? 1 : 0})
+      .attr('stroke', function(d){return d.degree >= 5 ? 'none' : '#4d4d4d'})
+      .attr('stroke-width', function(d){return d.degree >= 5 ? 0 : 1})
       .attr('cx', 0)
       .attr('cy', 0)
       //.call(drag)
-
 
       tabNodes.exit()
               .transition()
               .duration(200)
               .attr('fill-opacity', 0)
               .remove();
-
-
 
       var delPointNodes = chart.selectAll('.delPoint').data(force.nodes(), function(d){return d.delegation});
 
@@ -224,12 +213,12 @@
 
     var tableLabels = chart.selectAll('.tabLabels').data(forceTables.nodes(), function(d){return d.id});
 
-    tableLabels.transition().duration(200).attr('opacity', function(d){return d.degree > 5 ? 1 : 0.5})
+    tableLabels.transition().duration(200).attr('opacity', function(d){return d.degree >= 5 ? 1 : 0.5})
 
     tableLabels
     .enter().append('g')
     .attr('class', 'tabLabels')
-    .attr('opacity', function(d){return d.degree > 5 ? 1 : 0.5})
+    .attr('opacity', function(d){return d.degree >= 5 ? 1 : 0.5})
 
     tableLabels.exit().remove()
 
@@ -342,6 +331,12 @@
   network.delegationsHistory = function(x){
     if (!arguments.length) return delegationsHistory;
     delegationsHistory = x;
+    return network;
+  }
+
+  network.showLabel = function(x){
+    if (!arguments.length) return showLabel;
+    showLabel = x;
     return network;
   }
 
