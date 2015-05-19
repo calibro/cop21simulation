@@ -1,5 +1,6 @@
 html, body{
   height:100%;
+  overflow:hidden;
 }
 
 .header {
@@ -27,9 +28,6 @@ html, body{
   letter-spacing: 2px;
 }
 
-.viz {
-}
-
 .viz-main {
    height:1000px;
 }
@@ -38,7 +36,6 @@ html, body{
    height:1000px;
    background-color: #333333;
 }
-
 
 .link {
   fill: none;
@@ -51,4 +48,140 @@ html, body{
   fill:white;
   text-transform: uppercase;
   pointer-events: none;
+}
+
+.steps {
+  padding: 0!important;
+}
+
+.player {
+   background-color: #333333;
+   padding: 10px 0 0;
+}
+
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  margin: 0px!important;
+  border-radius: 0px;
+  -webkit-border-radius:0px;
+  -moz-border-radius:0px;
+  width: 100%;
+  padding: 10px 0 0;
+}
+
+.pagination > li > a {
+  width:calc(100% / 12);
+  height: 50px;
+  border-radius:0px;
+  -webkit-border-radius:0px;
+  -moz-border-radius:0px;
+  text-align: center;
+  display:table-cell;
+  vertical-align:middle;
+  padding-top: 15px;
+  color: #fff;
+  border: none;
+  background-color: #4D4D4D;
+  font-family: 'Alegreya Sans', sans-serif;
+  letter-spacing: 1px;
+  -o-transition:.5s;
+  -ms-transition:.5s;
+  -moz-transition:.5s;
+  -webkit-transition:.5s;
+  /* ...and now for the proper property */
+  transition:.5s;
+}
+
+.pagination > li > a:hover {
+  background-color: #202020;
+  color: #008E8A;
+}
+
+.pagination > .active > a,  .pagination > .active > a:focus {
+  background-color: #008E8A;
+  border-color: #008E8A;
+}
+
+.pagination > .disabled > a {
+  background-color: #202020;
+  color: #4D4D4D;
+}
+
+.pagination > li:first-child > a, .pagination > li:last-child > a {
+  border-radius:0px;
+  -webkit-border-radius:0px;
+  -moz-border-radius:0px;
+}
+
+.btn {
+  border-radius:0px;
+  -webkit-border-radius:0px;
+  -moz-border-radius:0px;
+  width:calc(100% / 3);
+  height: 50px;
+}
+
+.btn-group{
+  border-radius:0px;
+  -webkit-border-radius:0px;
+  -moz-border-radius:0px;
+  width: 100%;
+}
+
+.btn-group .btn {
+  width: calc(100% / 3);
+  height: 50px;
+  background-color: #4D4D4D;
+  color: #fff;
+  width:calc(100% / 3);
+  height: 50px;
+  font-family: 'Alegreya Sans', sans-serif;
+  letter-spacing: 1px;
+  -o-transition:.5s;
+  -ms-transition:.5s;
+  -moz-transition:.5s;
+  -webkit-transition:.5s;
+  /* ...and now for the proper property */
+  transition:.5s;
+}
+
+.btn-group .btn:hover {
+  background-color: #202020;
+}
+
+.popover{
+  border-radius: 0px;
+  -webkit-border-radius:0px;
+  -moz-border-radius:0px;
+  border: none;
+  background-color:#4D4D4D;
+
+}
+
+.popover-title {
+    font-family: 'Alegreya Sans', sans-serif;
+    font-size: 15px;
+    background-color: #008E8A;
+    color: #fff;
+    border-radius: 0px;
+    -webkit-border-radius:0px;
+    -moz-border-radius:0px;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.popover-content {
+    font-family: 'Alegreya', serif;
+    font-size: 15px;
+    border-radius: 0px;
+    -webkit-border-radius:0px;
+    -moz-border-radius:0px;
+    border: none;
+    background-color:#4D4D4D;
+    color:#C1C1C1;
+}
+
+.popover.top > .arrow:after {
+  border-top-color: #4D4D4D;
 }
