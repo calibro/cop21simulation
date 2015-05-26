@@ -15,11 +15,13 @@
         forceTables = d3.layout.force()
             .charge(-2000)
             .linkDistance(function(d){return d.value*15 < 40 ? 10 : d.value*15;})
-            .gravity(0.5),
+            .gravity(0.1)
+            .friction(0.3),
         force = d3.layout.force()
-                .alpha(0.00501)
+                //.alpha(0.00501)
                 .gravity(0)
-                 .charge(0);
+                 .charge(0)
+                 .friction(0.3);
 
 
     function network(selection){
@@ -88,7 +90,7 @@
           while (++i < n) {
             //o = nodes[i];
             o = force.nodes()[i]
-            c = forceTables.nodes().filter(function(d){return d.id == o.table})[0];
+            c = forceTables.nodes().filter(function(d){return d.id == o.delegation})[0];
             o.x += (c.x - o.x)* k;
             o.y += (c.y - o.y)* k;
             q.visit(collide(o));
@@ -151,7 +153,7 @@
         //delegation are always the same we don't need to remove them
 
         var delNodes = chart.selectAll('.del')
-                                .data(force.nodes(), function(d){return d.delegation});
+                                .data(force.nodes(), function(d){return d.entity});
 
 
         delNodes.enter().append('circle')
@@ -162,14 +164,16 @@
             .each(function(d){
                  $(this).popover('destroy')
                  $(this).popover({
-                   title: allDelegationsMap[d.delegation],
-                   content:delegationsHistory.filter(function(e){return e.delegation == d.delegation})[0].history.join(" > "),
+                   title: allDelegationsMap[d.entity],
+                   content:delegationsHistory.filter(function(e){return e.entity == d.entity})[0].history.join(" > "),
                    placement:'auto',
                    container: 'body',
                    trigger: 'hover',
                    html: true
                    })
                });
+
+        delNodes.exit().remove()
 
 
         var tabNodes = chart.selectAll('.tables')
@@ -198,7 +202,7 @@
               .attr('fill-opacity', 0)
               .remove();
 
-      var delPointNodes = chart.selectAll('.delPoint').data(force.nodes(), function(d){return d.delegation});
+      var delPointNodes = chart.selectAll('.delPoint').data(force.nodes(), function(d){return d.entity});
 
       // delPointNodes.transition().duration(200)
       //     .attr('fill', function(d) { return 'black'; });

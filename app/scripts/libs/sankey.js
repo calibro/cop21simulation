@@ -11,6 +11,7 @@
         tabRadius = 20,
         allTablesMap,
         currentStep,
+        margin = {top: 5, right: 5, bottom: 5, left: 5},
         showLabel = true;
 
 
@@ -28,8 +29,7 @@
         var linkG;
         var currentSteps = [currentStep-1, currentStep];
 
-        var margin = {top: 5, right: 5, bottom: 5, left: 5},
-            chartWidth = width - margin.left - margin.right,
+        var chartWidth = width - margin.left - margin.right,
             chartHeight = height - margin.top - margin.bottom;
 
         if (selection.select('svg').empty()){
@@ -222,9 +222,10 @@
 
          labels.transition().duration(500)
            .attr("y", function(d) { return d.y + d.dy / 2; })
-           .text(function(d) { if(d.value > 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
+           .text(function(d) { if(d.value >= 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
          .filter(function(d) { return d.x < chartWidth / 2; })
-           .text(function(d) { if(d.value > 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
+            .text(null)
+           //.text(function(d) { if(d.value >= 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
 
 
          labels.enter().append("text")
@@ -233,11 +234,12 @@
              .attr("dy", ".35em")
              .attr('class', 'tabLabels')
              .attr("text-anchor", "end")
-             .text(function(d) { if(d.value > 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
+             .text(function(d) { if(d.value >= 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
            .filter(function(d) { return d.x < chartWidth / 2; })
              .attr("x", 6 + sankey.nodeWidth())
              .attr("text-anchor", "start")
-             .text(function(d) { if(d.value > 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
+             .text(null)
+             //.text(function(d) { if(d.value >= 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
 
       }); //end selection
     } // end sankey
@@ -280,6 +282,12 @@
   sankey.allTablesMap = function(x){
     if (!arguments.length) return allTablesMap;
     allTablesMap = x;
+    return sankey;
+  }
+
+  sankey.margin = function(x){
+    if (!arguments.length) return margin;
+    margin = x;
     return sankey;
   }
 

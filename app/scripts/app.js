@@ -40,4 +40,7 @@ angular
       .otherwise({
         redirectTo: '/'
       });
-  });
+  })
+  .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+    cfpLoadingBarProvider.includeSpinner = false;
+  }]);

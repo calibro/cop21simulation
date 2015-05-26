@@ -14,7 +14,7 @@ angular.module('cop21App')
       var output = {nodes:[], links:[]};
 
       var delegationNested = d3.nest()
-                              .key(function(d){return d.delegation})
+                              .key(function(d){return d.entity})
                               //.key(function(d){return d.step})
                               //.key(function(d){return d.table})
                               .entries(input)
@@ -27,8 +27,8 @@ angular.module('cop21App')
         for (var i = step - 1; i > 0; i--)
           {
             var elm = {}
-            var target = d.values[i].table + "_" + d.values[i].step;
-            var source = d.values[i-1].table + "_" + d.values[i-1].step;
+            var target = d.values[i].delegation + "_" + d.values[i].step;
+            var source = d.values[i-1].delegation + "_" + d.values[i-1].step;
             elm.source = source
             elm.target = target
             links.push(elm)

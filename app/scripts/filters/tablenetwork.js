@@ -23,8 +23,8 @@ angular.module('cop21App')
       var lastEdges = input.filter(function(d){return d.step.toString() == lastSteps[0] || d.step.toString() == lastSteps[1]});
 
       var delegationNested = d3.nest()
+        .key(function(d){return d.entity})
         .key(function(d){return d.delegation})
-        .key(function(d){return d.table})
         .entries(lastEdges);
 
       var tempEdges = [];
@@ -43,7 +43,7 @@ angular.module('cop21App')
       var lastForDeg = input.filter(function(d){return d.step.toString() == lastSteps[1]});
 
       var nestedDegTable = d3.nest()
-        .key(function(d){return d.table})
+        .key(function(d){return d.delegation})
         .rollup(function(d){return d.length})
         .entries(lastForDeg)
 
@@ -51,7 +51,12 @@ angular.module('cop21App')
 
       tables.forEach(function(d,i){
         mapTable[d.id] = i;
-        d.degree = nestedDegTable.filter(function(e){return d.id == e.key})[0].values;
+        var filTable =nestedDegTable.filter(function(e){return d.id == e.key})[0]
+        if(filTable){
+          d.degree = filTable.values
+        }else {
+          d.degree = 0
+        }
       });
 
 
@@ -64,7 +69,6 @@ angular.module('cop21App')
 
       output.nodes = tables;
       output.links = links;
-
       return output;
     };
   });

@@ -1,7 +1,8 @@
+<div full-sankey ng-if="sankeyFull" class="fullSankey fullSankey-if" ng-click="closeSankey()"></div>
 <div class="container-fluid">
 	<div class="row header">
 		<div class="col-md-3 header-secondary">
-			Delegations Flows
+			Entities Flows <i class="fa fa-expand" ng-click="openSankey()"></i>
 		</div>
 		<div class="col-md-9 header-main">
 			Delegations Graph
@@ -23,23 +24,23 @@
 
 <div class="container-fluid">
 	<div class="row">
-		
+
 		<div class="col-md-3 player">
 			<div class="btn-group">
 			<button type="button" class="btn" ng-click="updateStep()">
 			<i class="fa fa-refresh"></i> Update
 			</button>
-			<button type="button" class="btn" ng-click="autoplay()">
+			<button type="button" class="btn" ng-model="playModel" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0" ng-click="autoplay()">
 			<i class="fa fa-play"></i>
 			</button>
-			<button type="button" class="btn" ng-click="stopplay()">
+			<button type="button" class="btn" ng-model="pauseModel" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0" ng-click="stopplay()">
 			<i class="fa fa-pause"></i>
 			</button>
 			</div>
 		</div>
-		 
+
 		<div class="col-md-9 steps">
-			<pagination items-per-page="1" total-items="steps.length" ng-model="currentStep" ng-change="updateData()"></pagination>
+			<pagination items-per-page="1" total-items="steps.length" ng-model="currentStep" max-size="maxSize" ng-change="updateData()"></pagination>
 		</div>
 		</div>
 	</div>
