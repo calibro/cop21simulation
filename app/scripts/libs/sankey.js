@@ -41,48 +41,50 @@
             .attr('height', chartHeight)
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-          legend = chart.append('g')
-            .attr('class', 'legend')
+          if(currentStep){
+            legend = chart.append('g')
+              .attr('class', 'legend')
 
-          legend.append('circle')
-            .attr('r', 8)
-            .attr('fill', 'none')
-            .attr('stroke', 'white')
-            .attr('stroke-width', 1)
-            .attr('cx', 5)
-            .attr('cy', 8)
-
-          legend.append('circle')
+            legend.append('circle')
               .attr('r', 8)
               .attr('fill', 'none')
               .attr('stroke', 'white')
               .attr('stroke-width', 1)
-              .attr('cx', chartWidth-5)
+              .attr('cx', 5)
               .attr('cy', 8)
 
-          legend.append('line')
-            .attr('x1', 13)
-            .attr('y1', 8)
-            .attr('x2', chartWidth-13)
-            .attr('y2', 8)
-            .attr('stroke', 'white')
-            .attr('stroke-width', 1)
+            legend.append('circle')
+                .attr('r', 8)
+                .attr('fill', 'none')
+                .attr('stroke', 'white')
+                .attr('stroke-width', 1)
+                .attr('cx', chartWidth-5)
+                .attr('cy', 8)
 
-            legend.append('text')
-              .attr('text-anchor', 'middle')
-              .attr('fill', 'white')
-              .attr('class', 'stepLeft')
-              .attr('x', 5)
-              .attr('y', 8)
-              .attr('dy', '3px')
+            legend.append('line')
+              .attr('x1', 13)
+              .attr('y1', 8)
+              .attr('x2', chartWidth-13)
+              .attr('y2', 8)
+              .attr('stroke', 'white')
+              .attr('stroke-width', 1)
 
-            legend.append('text')
+              legend.append('text')
                 .attr('text-anchor', 'middle')
                 .attr('fill', 'white')
-                .attr('class', 'stepRight')
-                .attr('x', chartWidth-5)
+                .attr('class', 'stepLeft')
+                .attr('x', 5)
                 .attr('y', 8)
                 .attr('dy', '3px')
+
+              legend.append('text')
+                  .attr('text-anchor', 'middle')
+                  .attr('fill', 'white')
+                  .attr('class', 'stepRight')
+                  .attr('x', chartWidth-5)
+                  .attr('y', 8)
+                  .attr('dy', '3px')
+              }
 
           viz = chart.append('g')
             .attr("transform", "translate(0," + marginLegend +")")
@@ -105,9 +107,10 @@
           linkG = viz.select('.linkG');
         }
 
-        var stepLeft = legend.select('.stepLeft').text(currentSteps[0])
-        var stepRight = legend.select('.stepRight').text(currentSteps[1])
-
+        if(currentStep){
+          var stepLeft = legend.select('.stepLeft').text(currentSteps[0])
+          var stepRight = legend.select('.stepRight').text(currentSteps[1])
+        }
                 // Set the sankey diagram properties
         var sankey = d3.sankey()
             .nodeWidth(5)
@@ -178,7 +181,7 @@
 
 
          node.enter().append("rect")
-             .attr("height", function(d) { return d.dy; })
+             .attr("height", function(d) {return d.dy; })
              .attr("width", sankey.nodeWidth())
              .attr('x', function(d){return d.x})
              .attr('y', function(d){return d.y})
@@ -224,7 +227,11 @@
            .attr("y", function(d) { return d.y + d.dy / 2; })
            .text(function(d) { if(d.value >= 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
          .filter(function(d) { return d.x < chartWidth / 2; })
-            .text(null)
+            //.text(null)
+            .text(function(d) {
+              if(!currentStep){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]}
+              else{return null;}
+              })
            //.text(function(d) { if(d.value >= 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
 
 
@@ -236,10 +243,14 @@
              .attr("text-anchor", "end")
              .text(function(d) { if(d.value >= 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
            .filter(function(d) { return d.x < chartWidth / 2; })
-             .attr("x", 6 + sankey.nodeWidth())
+             .attr("x", function (d) {return d.x + 6 + sankey.nodeWidth()})
              .attr("text-anchor", "start")
-             .text(null)
+             //.text(null)
              //.text(function(d) { if(d.value >= 5){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]} })
+             .text(function(d) {
+               if(!currentStep){return allTablesMap[d.name.split('_')[0] + '_' + d.name.split('_')[1]]}
+               else{return null;}
+               })
 
       }); //end selection
     } // end sankey

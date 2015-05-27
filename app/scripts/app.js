@@ -21,24 +21,24 @@ angular
   ])
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
-      })
+      // .when('/', {
+      //   templateUrl: 'views/main.html',
+      //   controller: 'MainCtrl'
+      // })
       .when('/viz', {
         templateUrl: 'views/viz.html',
         controller: 'VizCtrl'
       })
-      .when('/update', {
-        templateUrl: 'views/update.html',
-        controller: 'UpdateCtrl'
-      })
-      .when('/mockup', {
-        templateUrl: 'views/mockup.html',
-        controller: 'MockupCtrl'
-      })
+      // .when('/update', {
+      //   templateUrl: 'views/update.html',
+      //   controller: 'UpdateCtrl'
+      // })
+      // .when('/mockup', {
+      //   templateUrl: 'views/mockup.html',
+      //   controller: 'MockupCtrl'
+      // })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/viz'
       });
   })
   .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {

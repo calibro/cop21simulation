@@ -27,6 +27,7 @@ angular.module('cop21App')
 
     $scope.graphData = {};
     $scope.sankeyData;
+    $scope.sankeyDataFull;
 
     $scope.update = true;
     $scope.autoplay = false;
@@ -47,6 +48,7 @@ angular.module('cop21App')
       }else{
         $scope.sankeyData = parseSankeyFilter($scope.allEdges.filter(function(d){return d.step == $scope.currentStep || d.step == $scope.currentStep-1;}))
       }
+      $scope.sankeyDataFull = parseSankeyFilter($scope.allEdges);
       $scope.update = $scope.update ? false : true;
     }
 
@@ -70,6 +72,8 @@ angular.module('cop21App')
         }else{
           $scope.currentStep++
           $scope.updateData()
+          $scope.playModel = 1;
+          $scope.pauseModel = 0;
           }
         },3000);
     }
@@ -116,6 +120,7 @@ angular.module('cop21App')
               $scope.graphData.tables = tableNetworkFilter($scope.allEdges.filter(function(d){return d.step == $scope.currentStep || d.step == $scope.currentStep-1;}), $scope.allTables);
               $scope.graphData.delegations = $scope.allEdges.filter(function(d){return d.step == $scope.currentStep;});
               $scope.sankeyData = parseSankeyFilter($scope.allEdges.filter(function(d){return d.step == $scope.currentStep || d.step == $scope.currentStep-1;}))
+              $scope.sankeyDataFull = parseSankeyFilter($scope.allEdges);
               $scope.update = $scope.update ? false : true;
             },
             function(err){

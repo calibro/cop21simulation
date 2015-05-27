@@ -70,7 +70,7 @@ html, body{
   padding: 10px 0 0;
 }
 
-.pagination > li > a {
+.pagination > li > a, .pagination > li > a:focus{
   width:calc(100% / 12);
   height: 50px;
   border-radius:0px;
@@ -98,12 +98,18 @@ html, body{
   color: #008E8A;
 }
 
-.pagination > .active > a,  .pagination > .active > a:focus {
+.pagination > .active > a,  .pagination > .active > a:focus,.pagination > .active > a:hover {
   background-color: #008E8A;
   border-color: #008E8A;
 }
 
-.pagination > .disabled > a {
+
+.pagination > .disabled > a, .pagination > .disabled > a:focus {
+  background-color: #202020;
+  color: #4D4D4D;
+}
+
+.pagination > .disabled > a:hover {
   background-color: #202020;
   color: #4D4D4D;
 }
@@ -148,10 +154,18 @@ html, body{
 
 .btn-group .btn:hover {
   background-color: #202020;
+  color: #008E8A;
 }
 
 .btn-group .btn.active {
-  background-color: #202020;
+  background-color: #008E8A;
+}
+.btn-group > .btn:active{
+  background-color: #008E8A;
+}
+
+.btn-group .btn.active:hover {
+  color: #FFFFFF;
 }
 
 
@@ -194,6 +208,22 @@ html, body{
 #loading-bar .bar {
   background-color: #008E8A;
   height: 4px;
+}
+
+.expand{
+  float: right;
+  font-size: 15px;
+  margin-top: 6px;
+  cursor: pointer;
+  -webkit-transition: 0.5s linear all;
+  -moz-transition: 0.5s linear all;
+  -ms-transition: 0.5s linear all;
+  -o-transition: 0.5s linear all;
+  transition: 0.5s linear all;
+}
+
+.expand:hover{
+  color: #008E8A;
 }
 
 .fullSankey{
