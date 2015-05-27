@@ -25,6 +25,7 @@
               net
                 .allDelegationsMap(scope.allDelegationsMap)
                 .delegationsHistory(scope.delegationsHistory)
+                .first(scope.firstGraph)
               )
            }
          });

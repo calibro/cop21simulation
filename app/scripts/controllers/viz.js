@@ -13,6 +13,7 @@ angular.module('cop21App')
     cfpLoadingBar.start();
     $scope.sankeyFull = false;
 
+    $scope.firstGraph;
     $scope.allTables;
     $scope.allDelegations;
     $scope.allEdges;
@@ -36,6 +37,7 @@ angular.module('cop21App')
     $scope.pauseModel = 1;
 
     $scope.updateData = function(){
+      $scope.firstGraph = false;
       $scope.allTables = $scope.allTablesStep.filter(function(d){return d.step == $scope.lastSteps});
       $scope.allTables.map(function(d){
         $scope.allTablesMap[d.id] = d.name;
@@ -75,7 +77,7 @@ angular.module('cop21App')
           $scope.playModel = 1;
           $scope.pauseModel = 0;
           }
-        },3000);
+        },5000);
     }
 
     $scope.stopplay = function(){
@@ -84,6 +86,7 @@ angular.module('cop21App')
       $scope.pauseModel = 1;
     };
     $scope.updateStep = function(){
+      $scope.firstGraph = true;
       cfpLoadingBar.start();
       apiService.getTable(DELEGATIONS_ID).then(
         function(delegationsData){

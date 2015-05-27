@@ -10,18 +10,18 @@
         delPadding = 2,
         tabRadius = 20,
         showLabel = true,
+        first,
         allDelegationsMap,
         delegationsHistory,
         forceTables = d3.layout.force()
             .charge(-2000)
             .linkDistance(function(d){return d.value*15 < 40 ? 10 : d.value*15;})
-            .gravity(0.1)
+            .gravity(0.15)
             .friction(0.3),
         force = d3.layout.force()
-                //.alpha(0.00501)
                 .gravity(0)
                  .charge(0)
-                 .friction(0.3);
+                 .friction(0.88)
 
 
     function network(selection){
@@ -31,6 +31,8 @@
         var margin = {top: 5, right: 5, bottom: 5, left: 5},
             chartWidth = width - margin.left - margin.right,
             chartHeight = height - margin.top - margin.bottom;
+
+        var firstLap = true;
 
         var nodes = data.delegations,
             links = data.tables.links,
@@ -43,6 +45,10 @@
 
         nodes.forEach(function(d){
           d.radius = delRadius;
+        })
+
+        nodes.sort(function(a,b){
+          return d3.ascending(a.entity, b.entity)
         })
 
         if (selection.select('svg').empty()){
@@ -107,7 +113,8 @@
 
         forceTables.on('tick', function(e){
 
-          force.start();
+            force.start();
+
           var q = d3.geom.quadtree(forceTables.nodes()),
               i = -1,
               n = forceTables.nodes().length;
@@ -139,8 +146,11 @@
 
         });
 
-        forceTables.on('end', function(){
-          //force.start();
+        force.on('end', function(){
+          if(!first && firstLap){
+            forceTables.start()
+            firstLap = false;
+          }
         });
 
         // var link = chart.selectAll('.links')
@@ -153,7 +163,7 @@
         //delegation are always the same we don't need to remove them
 
         var delNodes = chart.selectAll('.del')
-                                .data(force.nodes(), function(d){return d.entity});
+                                .data(force.nodes(), function(d){ return d.entity});
 
 
         delNodes.enter().append('circle')
@@ -161,6 +171,8 @@
             .attr('r', delRadius - delPadding)
             .attr('fill', '#00ffff')
             .attr('fill-opacity', 0.5)
+            .attr('cx', function(d){console.log("sono nuovo" + d); return 0})
+            .attr('cy', 0)
             .each(function(d){
                  $(this).popover('destroy')
                  $(this).popover({
@@ -238,7 +250,13 @@
     })
     .call(wrap, 100);
 
-    forceTables.start();
+    if(first){
+      forceTables.start();
+    }else {
+      force.start()
+
+    }
+
 
       }); //end selection
     }; // end network
@@ -341,6 +359,12 @@
   network.showLabel = function(x){
     if (!arguments.length) return showLabel;
     showLabel = x;
+    return network;
+  }
+
+  network.first = function(x){
+    if (!arguments.length) return first;
+    first = x;
     return network;
   }
 
