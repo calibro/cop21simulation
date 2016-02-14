@@ -15,8 +15,10 @@
         delegationsHistory,
         forceTables = d3.layout.force()
             .charge(-2000)
-            .linkDistance(function(d){return d.value*15 < 40 ? 10 : d.value*15;})
-            .gravity(0.15)
+            .linkDistance(function(d){return d.value*15 < 40 ? 20 : d.value*25;})
+            .linkStrength(function(d){return d.value/3;})
+            //.gravity(0.15)
+            .gravity(0.1)
             .friction(0.3),
         force = d3.layout.force()
                 .gravity(0)
@@ -37,6 +39,10 @@
         var nodes = data.delegations,
             links = data.tables.links,
             nodesTables = data.tables.nodes;
+
+        var linksDomain = d3.extent(links, function(d){return d.value})
+        console.log(linksDomain)
+        var linksValueScale = d3.scale.linear().range([0,1]).domain(linksDomain)
 
         nodesTables.forEach(function(d){
           d.type = d.id;
@@ -77,6 +83,7 @@
         forceTables
             .nodes(nodesTables)
             .links(links)
+            //.linkStrength(function(d){return linksValueScale(d.value)})
             .size([chartWidth, chartHeight]);
 
 

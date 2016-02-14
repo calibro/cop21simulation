@@ -186,7 +186,7 @@
              .attr('x', function(d){return d.x})
              .attr('y', function(d){return d.y})
              .attr('class', 'node')
-            .style("fill", "black")
+            .style("fill", "white")
             .each(function(d){
                  $(this).popover('destroy')
                  $(this).popover({

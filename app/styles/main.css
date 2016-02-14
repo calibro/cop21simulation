@@ -44,7 +44,7 @@ html, body{
 
 .tabLabels, .stepLeft, .stepRight{
   font-family: 'Alegreya Sans', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   fill:white;
   text-transform: uppercase;
   pointer-events: none;
